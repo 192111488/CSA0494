@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 5
+
+void staticAllocation() {
+    // Static allocation
+    int staticArray[SIZE];
+    printf("Static Allocation:\n");
+    for (int i = 0; i < SIZE; i++) {
+        staticArray[i] = i * 2;
+        printf("%d ", staticArray[i]);
+    }
+    printf("\n\n");
+}
+
+void automaticAllocation() {
+    // Automatic allocation
+    int automaticArray[SIZE];
+    printf("Automatic Allocation:\n");
+    for (int i = 0; i < SIZE; i++) {
+        automaticArray[i] = i * 3;
+        printf("%d ", automaticArray[i]);
+    }
+    printf("\n\n");
+}
+
+void dynamicAllocationMalloc() {
+    // Dynamic allocation using malloc
+    int *mallocArray = (int *)malloc(SIZE * sizeof(int));
+    if (mallocArray == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    printf("Dynamic Allocation using malloc:\n");
+    for (int i = 0; i < SIZE; i++) {
+        mallocArray[i] = i * 5;
+        printf("%d ", mallocArray[i]);
+    }
+    printf("\n\n");
+
+    free(mallocArray); // Free dynamically allocated memory
+}
+
+void dynamicAllocationCalloc() {
+    // Dynamic allocation using calloc
+    int *callocArray = (int *)calloc(SIZE, sizeof(int));
+    if (callocArray == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    printf("Dynamic Allocation using calloc:\n");
+    for (int i = 0; i < SIZE; i++) {
+        callocArray[i] = i * 7;
+        printf("%d ", callocArray[i]);
+    }
+    printf("\n\n");
+
+    free(callocArray); // Free dynamically allocated memory
+}
+
+int main() {
+    staticAllocation();
+    automaticAllocation();
+    dynamicAllocationMalloc();
+    dynamicAllocationCalloc();
+    return 0;
+}
