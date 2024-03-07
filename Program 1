@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    pid_t pid, parent_pid;
+
+    pid = getpid(); // get process ID
+    parent_pid = getppid(); // get parent process ID
+
+    printf("Process ID: %d\n", pid);
+    printf("Parent Process ID: %d\n", parent_pid);
+
+    return 0;
+}
