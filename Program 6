@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_PROCESS 10
+
+// Process structure
+typedef struct {
+    int process_id;
+    int arrival_time;
+    int burst_time;
+    int priority;
+    int remaining_time;
+    int turnaround_time;
+    int waiting_time;
+} Process;
+
+// Function to calculate turnaround time and waiting time for each process
+void calculateTimes(Process processes[], int n) {
+    int total_waiting_time = 0;
+
+    // Calculate waiting time for each process
+    for (int i = 0; i < n; i++) {
+        processes[i].waiting_time = processes[i].turnaround_time - processes[i].burst_time;
+        total_waiting_time += processes[i].waiting_time;
+    }
+}
+
+// Function to calculate average turnaround time and average waiting time
+void calculateAverageTimes(Process processes[], int n, float *avg_turnaround_time, float *avg_waiting_time) {
+    int total_turnaround_time = 0, total_waiting_time = 0;
+
+    for (int i = 0; i < n; i++) {
+        total_turnaround_time += processes[i].turnaround_time;
+        total_waiting_time += processes[i].waiting_time;
+    }
+
+    *avg_turnaround_time = (float)total_turnaround_time / n;
+    *avg_waiting_time = (float)total_waiting_time / n;
+}
+
+// Function to select the process with the highest priority and remaining time
+int selectHighestPriorityProcess(Process processes[], int n, int current_time) {
+    int highest_priority_index = -1;
+    int highest_priority = -1;
+
+    for (int i = 0; i < n; i++) {
+        if (processes[i].arrival_time <= current_time && processes[i].remaining_time > 0 &&
+            processes[i].priority > highest_priority) {
+            highest_priority = processes[i].priority;
+            highest_priority_index = i;
+        }
+    }
+
+    return highest_priority_index;
+}
+
+int main() {
+    int n;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > MAX_PROCESS) {
+        printf("Invalid number of processes.\n");
+        return 1;
+    }
+
+    Process processes[MAX_PROCESS];
+
+    // Input process details
+    for (int i = 0; i < n; i++) {
+        printf("Enter arrival time, burst time, and priority for process %d: ", i + 1);
+        scanf("%d %d %d", &processes[i].arrival_time, &processes[i].burst_time, &processes[i].priority);
+        processes[i].process_id = i + 1;
+        processes[i].remaining_time = processes[i].burst_time;
+    }
+
+    int current_time = 0;
+    int completed_processes = 0;
+
+    // Execute processes based on priority
+    while (completed_processes < n) {
+        int highest_priority_index = selectHighestPriorityProcess(processes, n, current_time);
+        if (highest_priority_index != -1) {
+            printf("Executing process %d\n", processes[highest_priority_index].process_id);
+            processes[highest_priority_index].remaining_time--;
+
+            if (processes[highest_priority_index].remaining_time == 0) {
+                completed_processes++;
+                processes[highest_priority_index].turnaround_time = current_time + 1 - processes[highest_priority_index].arrival_time;
+            }
+        }
+
+        current_time++;
+    }
+
+    // Calculate waiting time for each process
+    calculateTimes(processes, n);
+
+    // Calculate average turnaround time and average waiting time
+    float avg_turnaround_time, avg_waiting_time;
+    calculateAverageTimes(processes, n, &avg_turnaround_time, &avg_waiting_time);
+
+    // Output results
+    printf("\nProcess\tArrival Time\tBurst Time\tPriority\tTurnaround Time\tWaiting Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t\t%d\n", processes[i].process_id, processes[i].arrival_time,
+               processes[i].burst_time, processes[i].priority, processes[i].turnaround_time, processes[i].waiting_time);
+    }
+
+    printf("\nAverage Turnaround Time: %.2f\n", avg_turnaround_time);
+    printf("Average Waiting Time: %.2f\n", avg_waiting_time);
+
+    return 0;
+}
